@@ -126,4 +126,27 @@ class BinaryTreeSuite(_system: ActorSystem) extends TestKit(_system) with FunSui
     }
     receiveN(requester, ops, expectedReplies)
   }
+
+  test("proper inserts after deletion") {
+    val topNode = system.actorOf(Props[BinaryTreeSet])
+
+    topNode ! Insert(testActor, id = 1, 1)
+    expectMsg(OperationFinished(1))
+    topNode ! Contains(testActor, id = 2, 1)
+    expectMsg(ContainsResult(2, true))
+
+    topNode ! GC
+
+    topNode ! Remove(testActor, id = 3, 1)
+    expectMsg(OperationFinished(3))
+    topNode ! Contains(testActor, id = 4, 1)
+    expectMsg(ContainsResult(4, false))
+
+    topNode ! GC
+
+    topNode ! Insert(testActor, id = 5, 1)
+    expectMsg(OperationFinished(5))
+    topNode ! Contains(testActor, id = 6, 1)
+    expectMsg(ContainsResult(6, true))
+  }
 }

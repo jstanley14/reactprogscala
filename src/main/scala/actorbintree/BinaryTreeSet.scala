@@ -88,7 +88,7 @@ class BinaryTreeSet extends Actor {
       context stop root
       root = newRoot
       context become normal
-      pendingQueue foreach (self forward _)
+      pendingQueue foreach (root forward _)
       pendingQueue = Queue.empty[Operation]
     }
     case m: Operation => pendingQueue = pendingQueue enqueue m
